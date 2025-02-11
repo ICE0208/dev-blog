@@ -21,7 +21,7 @@ export default function MainNav() {
       <Link
         href="/posts"
         className={cn(
-          "text-md font-medium transition-colors hover:text-primary",
+          "text-md transition-colors hover:text-primary hidden sm:inline-block",
           pathname === "/posts"
             ? "text-foreground font-bold"
             : "text-foreground/60 font-medium"
@@ -32,7 +32,7 @@ export default function MainNav() {
       <Link
         href="/about"
         className={cn(
-          "text-md transition-colors hover:text-primary",
+          "text-md transition-colors hover:text-primary hidden sm:inline-block",
           pathname === "/about"
             ? "text-foreground font-bold"
             : "text-foreground/60 font-medium"
