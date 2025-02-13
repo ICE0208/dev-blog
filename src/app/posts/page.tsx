@@ -4,7 +4,6 @@ import { posts } from "@content/index";
 
 export default function PostsPage() {
   const sortedPosts = sortPosts(posts.filter((post) => post.published));
-  const displayPosts = posts;
 
   return (
     <div className="px-8 max-w-4xl py-6 lg:py-10">

@@ -30,7 +30,7 @@ export default function RootLayout({
         <Providers>
           <div className={"relative flex min-h-dvh flex-col bg-background"}>
             <SiteHeader />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 overflow-hidden">{children}</main>
           </div>
         </Providers>
       </body>

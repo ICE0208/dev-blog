@@ -1,5 +1,7 @@
 import { defineConfig, defineCollection, s } from "velite";
-
+import rehypeSlug from "rehype-slug";
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 const computedFields = <T extends { slug: string }>(data: T) => ({
   ...data,
   slugAsParams: data.slug.split("/").slice(1).join("/"),
@@ -33,7 +35,14 @@ export default defineConfig({
   // MDX 구성: Markdown 파일 처리를 위한 설정
   mdx: {
     // rehype 플러그인: HTML 처리를 위한 플러그인
-    rehypePlugins: [],
+    rehypePlugins: [
+      [rehypeSlug],
+      [
+        rehypeAutolinkHeadings,
+        { behavior: "wrap", properties: { className: ["anchor"] } },
+      ],
+      [rehypePrettyCode, { theme: "github-dark" }],
+    ],
     // remark 플러그인: Markdown 처리를 위한 플러그인
     remarkPlugins: [],
   },
