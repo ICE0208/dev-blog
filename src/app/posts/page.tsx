@@ -1,12 +1,29 @@
 import PostItem from "@/components/post-item";
+import QueryPagination from "@/components/query-pagination";
 import { sortPosts } from "@/lib/utils";
 import { posts } from "@content/index";
 
-export default function PostsPage() {
+const POSTS_PER_PAGE = 5;
+
+interface BlogPageProps {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
+
+export default async function PostsPage({ searchParams }: BlogPageProps) {
+  const currentPage = Number((await searchParams).page) || 1;
   const sortedPosts = sortPosts(posts.filter((post) => post.published));
 
+  const displayPosts = sortedPosts.slice(
+    POSTS_PER_PAGE * (currentPage - 1),
+    POSTS_PER_PAGE * currentPage
+  );
+
+  const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
+
   return (
-    <div className="px-8 max-w-4xl py-6 lg:py-10">
+    <div className="px-8 max-w-4xl py-6 lg:py-10 mx-auto">
       <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
         <div className="flex-1 space-y-4">
           <h1 className="inline-block font-black text-4xl lg:text-5xl">
@@ -16,9 +33,9 @@ export default function PostsPage() {
         </div>
       </div>
       <hr className="mt-8" />
-      {sortedPosts?.length > 0 ? (
+      {displayPosts?.length > 0 ? (
         <ul className="flex flex-col">
-          {sortedPosts.map((post) => {
+          {displayPosts.map((post) => {
             const { slug, date, title, description } = post;
             return (
               <li key={slug}>
@@ -35,6 +52,10 @@ export default function PostsPage() {
       ) : (
         <p>Nothing to see here yet.</p>
       )}
+      <QueryPagination
+        totalPages={totalPages}
+        className="justify-end sm:justify-center mt-4"
+      />
     </div>
   );
 }
