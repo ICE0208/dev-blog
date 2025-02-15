@@ -2,6 +2,12 @@ import PostItem from "@/components/post-item";
 import QueryPagination from "@/components/query-pagination";
 import { sortPosts } from "@/lib/utils";
 import { posts } from "@content/index";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Posts",
+  description: "My Posts...",
+};
 
 const POSTS_PER_PAGE = 5;
 
