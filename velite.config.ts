@@ -18,6 +18,8 @@ const posts = defineCollection({
       date: s.isodate(),
       published: s.boolean().default(true),
       body: s.mdx(),
+      tags: s.array(s.string()).optional(),
+      // toc: s.toc({ maxDepth: 3 }),
     })
     .transform(computedFields),
 });
