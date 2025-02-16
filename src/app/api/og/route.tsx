@@ -29,12 +29,10 @@ export async function GET(req: NextRequest) {
             justifyContent: "center",
             backgroundColor: "#fff",
             fontSize: 28,
-            fontWeight: 600,
-
             textAlign: "center",
           }}
         >
-          <div style={{ fontSize: 64 }}>{heading}</div>
+          <div style={{ fontSize: 64, fontWeight: 900 }}>{heading}</div>
           <div style={{ marginTop: 40 }}>{"🧊 ICE28's Dev Blog"}</div>
         </div>
       ),
