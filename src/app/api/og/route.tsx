@@ -4,11 +4,8 @@ import { ImageResponse } from "next/og";
 export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
-  const interBold = fetch(
-    new URL("../../../../assets/fonts/NanumHumanBold.woff", import.meta.url)
-  ).then((res) => res.arrayBuffer());
   try {
-    const fontBold = await interBold;
+    // const fontBold = await nanumHumanBold;
     const { searchParams } = req.nextUrl;
     const title = searchParams.get("title");
     if (!title) {
@@ -27,21 +24,20 @@ export async function GET(req: NextRequest) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#fff",
-            fontSize: 28,
+            backgroundColor: "#020817",
+            color: "#F8FAFC",
             textAlign: "center",
           }}
         >
-          <div style={{ fontSize: 64 }}>{heading}</div>
-          <div style={{ marginTop: 40 }}>{"🧊 ICE28's Dev Blog"}</div>
+          <div style={{ fontSize: 80 }}>{heading}</div>
+          <div style={{ marginTop: 40, fontSize: 34 }}>
+            {"🧊 ICE28's Dev Blog"}
+          </div>
         </div>
       ),
       {
         width: 1200,
         height: 630,
-        fonts: [
-          { name: "Inter", data: fontBold, weight: 700, style: "normal" },
-        ],
       }
     );
   } catch {
