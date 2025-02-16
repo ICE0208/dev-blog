@@ -10,6 +10,12 @@ const useMDXComponent = (code: string) => {
 const components = {
   Image,
   Callout,
+  h1: ({ children }: { children: React.ReactNode }) => (
+    <h1 className="text-3xl font-bold">{children}</h1>
+  ),
+  h2: ({ children }: { children: React.ReactNode }) => (
+    <h2 className="text-2xl font-bold">{children}</h2>
+  ),
 };
 
 interface MdxProps {
