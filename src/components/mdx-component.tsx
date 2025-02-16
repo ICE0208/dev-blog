@@ -16,6 +16,9 @@ const components = {
   h2: ({ children }: { children: React.ReactNode }) => (
     <h2 className="text-2xl font-bold">{children}</h2>
   ),
+  p: ({ children }: { children: React.ReactNode }) => (
+    <p className="text-lg">{children}</p>
+  ),
 };
 
 interface MdxProps {
