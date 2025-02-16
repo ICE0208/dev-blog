@@ -41,12 +41,13 @@ interface TagPageProps {
 
 export default async function TagPage({ params, searchParams }: TagPageProps) {
   const { tag } = await params;
-  const title = tag.split("-").join(" ");
+  const decodedTag = decodeURIComponent(tag);
+  const title = decodedTag.split("-").join(" ");
   const currentPage = Number((await searchParams).page) || 1;
 
   const postsByTag = getPostsByTagSlug(
     posts.filter((post) => post.published),
-    tag
+    decodedTag
   );
   const sortedPosts = sortPosts(postsByTag);
   const displayPosts = sortedPosts.slice(
@@ -83,7 +84,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
                       description={description}
                       date={date}
                       tags={tags}
-                      currentTag={tag}
+                      currentTag={decodedTag}
                     />
                   </li>
                 );
@@ -107,7 +108,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
                 tag={t}
                 key={t}
                 count={tags[t]}
-                current={slug(t) === tag}
+                current={slug(t) === decodedTag}
               />
             ))}
           </CardContent>
