@@ -23,6 +23,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      className="bg-background"
     >
       <body
         className={cn(
