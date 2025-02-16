@@ -5,7 +5,7 @@ export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   const interBold = fetch(
-    new URL("../../../../assets/fonts/Inter-Bold.ttf", import.meta.url)
+    new URL("../../../../assets/fonts/NanumHumanBold.ttf", import.meta.url)
   ).then((res) => res.arrayBuffer());
   try {
     const fontBold = await interBold;
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
             textAlign: "center",
           }}
         >
-          <div style={{ fontSize: 64, fontWeight: 900 }}>{heading}</div>
+          <div style={{ fontSize: 64 }}>{heading}</div>
           <div style={{ marginTop: 40 }}>{"🧊 ICE28's Dev Blog"}</div>
         </div>
       ),
