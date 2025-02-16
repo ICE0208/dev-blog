@@ -5,10 +5,13 @@ import { buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
 import { Tag } from "./tag";
+import { slug as githubSlugger } from "github-slugger";
 type PostItemProps = Pick<
   Post,
   "slug" | "title" | "description" | "date" | "tags"
->;
+> & {
+  currentTag?: string;
+};
 
 export default function PostItem({
   slug,
@@ -16,12 +19,13 @@ export default function PostItem({
   description,
   date,
   tags,
+  currentTag,
 }: PostItemProps) {
   return (
     <article className="flex flex-col gap-2 border-border border-b py-3">
       <div>
         <h2 className="text-2xl font-bold">
-          <Link href={slug}>{title}</Link>
+          <Link href={`/${slug}`}>{title}</Link>
         </h2>
       </div>
       <div className="flex gap-2">
@@ -29,6 +33,7 @@ export default function PostItem({
           <Tag
             tag={tag}
             key={tag}
+            current={githubSlugger(tag) === currentTag}
           />
         ))}
       </div>

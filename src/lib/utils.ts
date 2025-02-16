@@ -1,5 +1,6 @@
 import { Post } from "@content/index";
 import { clsx, type ClassValue } from "clsx";
+import { slug } from "github-slugger";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -37,4 +38,12 @@ export function getAllTags(posts: Array<Post>) {
 
 export function sortTagsByCount(tags: Record<string, number>) {
   return Object.keys(tags).sort((a, b) => tags[b] - tags[a]);
+}
+
+export function getPostsByTagSlug(posts: Array<Post>, tag: string) {
+  return posts.filter((post) => {
+    if (!post.tags) return false;
+    const slugifiedTags = post.tags.map((tag) => slug(tag));
+    return slugifiedTags.includes(tag);
+  });
 }
