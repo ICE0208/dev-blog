@@ -23,7 +23,7 @@ export async function generateMetadata({
 }
 
 export const generateStaticParams = () => {
-  const tags = getAllTags(posts);
+  const tags = getAllTags(posts.filter((post) => post.published));
   const paths = Object.keys(tags).map((tag) => ({ tag: slug(tag) }));
   return paths;
 };
@@ -44,7 +44,10 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
   const title = tag.split("-").join(" ");
   const currentPage = Number((await searchParams).page) || 1;
 
-  const postsByTag = getPostsByTagSlug(posts, tag);
+  const postsByTag = getPostsByTagSlug(
+    posts.filter((post) => post.published),
+    tag
+  );
   const sortedPosts = sortPosts(postsByTag);
   const displayPosts = sortedPosts.slice(
     POSTS_PER_PAGE * (currentPage - 1),

@@ -6,7 +6,10 @@ import { posts } from "@content/index";
 import Link from "next/link";
 
 export default function Home() {
-  const latestPosts = sortPosts(posts).slice(0, 5);
+  const latestPosts = sortPosts(posts.filter((post) => post.published)).slice(
+    0,
+    5
+  );
   return (
     <>
       <section className="space-y-6 pb-8 pt-6 mt-6 md:pb-12 md:mt-10 lg:py-32">

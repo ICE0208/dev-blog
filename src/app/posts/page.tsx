@@ -30,7 +30,7 @@ export default async function PostsPage({ searchParams }: BlogPageProps) {
 
   const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
 
-  const tags = getAllTags(posts);
+  const tags = getAllTags(posts.filter((post) => post.published));
   const sortedTags = sortTagsByCount(tags);
 
   return (
