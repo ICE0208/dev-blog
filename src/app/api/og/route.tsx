@@ -5,7 +5,7 @@ export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   const interBold = fetch(
-    new URL("../../../../assets/fonts/NanumHumanBold.ttf", import.meta.url)
+    new URL("../../../../assets/fonts/NanumHumanBold.woff", import.meta.url)
   ).then((res) => res.arrayBuffer());
   try {
     const fontBold = await interBold;
