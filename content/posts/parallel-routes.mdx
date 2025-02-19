@@ -1,0 +1,159 @@
+---
+title: Parallel Routes가 뭔데?
+description: 복잡해서 미뤄왔던 Parallel Routes, 이제는 알아볼 때가 되었다.
+date: 2025-02-18
+tags: ["NextJS"]
+---
+
+# Parallel Routes의 정의
+
+[공식 문서](https://nextjs.org/docs/app/building-your-application/routing/parallel-routes)에 따르면, Parallel Routes를 사용하면 동일한 레이아웃 내에서 하나 이상의 페이지를 동시에 렌더링하거나 조건부로 렌더링할 수 있다고 한다.
+
+<br />
+
+# Parallel Routes의 구성 (Slots)
+
+Parallel Routes는 `slots` 이라는 것을 사용해서 만들어지고,  
+이 slots은 `@folder` 의 규칙으로 정의할 수 있다고 한다.
+
+> 예를 들어, @analytics, @team 처럼 정의할 수 있다.
+
+<br />
+
+<img
+  src="/api/image/parallel-routes/slots-passed-to-parent.webp"
+  style={{ maxHeight: "400px" }}
+  alt="slots passed to parent"
+/>
+
+slots은 공유된 부모 레이아웃에 props로 전달된다.  
+위의 사진을 보면 `app/layout.tsx`가 `@article`과 `@users`를 props로 받아들이고, `children`과 함께 병렬로 렌더링 할 수 있다.
+
+```tsx {7-8,14-15} showLineNumbers title="app/layout.tsx"
+export default function RootLayout({
+  children,
+  articles,
+  users,
+}: Readonly<{
+  children: React.ReactNode;
+  articles: React.ReactNode;
+  users: React.ReactNode;
+}>) {
+  return (
+    <html>
+      <body>
+        {children}
+        {articles}
+        {users}
+      </body>
+    </html>
+  );
+}
+```
+
+참고로, slots는 URL 구조에 영향을 미치지 않는다고 한다.
+
+> 예를 들어, `@users/list` 의 경우 `@users`가 slot이므로 URL은 `/list`가 된다.
+
+<br />
+
+# Active state와 navigation의 관계
+
+NextJS는 각 slot의 `활성 상태`(active state)를 추적하며, 이는 두 가지 navigation 방식에 따라 다르게 동작한다.
+
+- **_Soft Navigation_**: 클라이언트 사이드 라우팅 기능으로 페이지를 이동하는 방식이다. 이 경우 NextJS는 [부분 렌더링](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#4-partial-rendering)을 통해 현재 URL과 관계없이 다른 slot들의 상태를 유지하면서, 변경이 필요한 slot만 업데이트한다.
+
+- **_Hard Navigation_**: URL을 직접 입력하거나 페이지를 새로고침하는 전통적인 페이지 이동 방식이다. 이 경우 NextJS는 현재 URL과 일치하지 않는 slot들의 상태를 파악할 수 없어, 해당 slot들은 `default` 파일을 보여주거나 해당 파일이 없다면 `404` 페이지를 표시한다.
+
+> 활성 상태(active state): 현재 화면에 표시되고 있는 slot의 상태를 의미한다.  
+> 부분 렌더링(partial rendering): 페이지 전체가 아닌 변경이 필요한 부분만 새로 그리는 렌더링 방식이다.
+
+## default 파일
+
+위에서 설명했듯, Hard Navigation으로 페이지 이동 시 현재 URL과 일치하는 slot의 경로를 찾을 수 없다면 404 페이지가 렌더링 된다. 이러한 상황을 방지하기 위해 default 파일을 정의하여 대체 콘텐츠를 표시할 수 있다.
+
+<img
+  src="/api/image/parallel-routes/no-about-in-articles.webp"
+  style={{ maxHeight: "400px" }}
+  alt="no about in articles"
+/>
+
+위 폴더 구조를 살펴보면, `@users` slot에는 `/about` 경로가 있지만, `articles` slot에는 없다. 따라서 해당 구조인 상태에서 `/about` 경로로 이동하면 (Hard Navigation으로) 404 페이지가 렌더링 된다.
+
+이러한 상황을 방지하기 위해 아래와 같이 @articles slot에 `default` 파일을 정의하여 대체 콘텐츠를 표시할 수 있다.
+
+<img
+  src="/api/image/parallel-routes/add-default-to-articles.webp"
+  style={{ maxHeight: "400px" }}
+  alt="add default to articles"
+/>
+
+이제 위 구조에서 `/about` 경로로 이동하면 `@articles` slot의 `default` 파일이 렌더링
+된다. 👍
+
+<img
+  src="/api/image/parallel-routes/about-articles-default.webp"
+  style={{ maxHeight: "400px" }}
+  alt="about articles default"
+/>
+
+## useSelectedLayoutSegment(s)
+
+[useSelectedLayoutSegment](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment) 및 [useSelectedLayoutSegments](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segments)는 `parallelRoutesKey`라는 매개변수를 받는다.  
+이것을 통해, slot 내의 활성 라우트 세그먼트를 읽을 수 있게 한다.
+
+```tsx {1,16} showLineNumbers title="app/layout.tsx"
+"use client";
+
+import "./globals.css";
+import Link from "next/link";
+import { useSelectedLayoutSegment } from "next/navigation";
+
+export default function RootLayout({
+  children,
+  articles,
+  users,
+}: Readonly<{
+  children: React.ReactNode;
+  articles: React.ReactNode;
+  users: React.ReactNode;
+}>) {
+  const usersSegment = useSelectedLayoutSegment("users");
+  console.log(usersSegment);
+
+  return (
+    ...
+  )
+```
+
+<br />
+
+# Parallel Routes 활용하기
+
+Parallel Routes를 활용하여 다음과 같은 상황을 구현할 수 있다.
+
+1. 특정 조건에 따라 라우트를 조건부로 렌더링하기
+2. 슬롯 내에 `layout` 파일을 생성하여 페이지 간 탭을 공유하기
+3. [Intercepting Routes](https://nextjs.org/docs/app/building-your-application/routing/intercepting-routes)와 함께 사용하여 모달 만들기
+4. 각 라우트에 대해 독립적인 로딩/에러 UI 구현하기
+
+> [자세한 예시 보러가기](http://nextjs.org/docs/app/building-your-application/routing/parallel-routes#examples) 👈
+
+<br />
+
+# 마무리
+
+폴더 구조도 복잡하고 뭔가 직관적이지 않아서 이해하기 어려웠다. 솔직히 아직까지는 Parallel Routes을 사용하면 어떤 점이 좋은지 잘 모르겠다.
+
+다음에는 `Intercepting Routes`를 공부하면서 정리하고, Parallel Routes와 함께 모달을 만들어보아야겠다.
+
+<br />
+
+# 참고&공부 자료
+
+- [NextJS 공식 문서 - Parallel Routes](https://nextjs.org/docs/app/building-your-application/routing/parallel-routes)
+- [Learn Next.js Parallel Routes In 16 Minutes](https://youtu.be/wi8kF8UniUI?si=b9CtYKv4jNpkj1Hu)
+- [NextJS Parallel Routes Explained with a Simple Example](https://youtu.be/M836RZxReHU?si=VaQEZKxz5Pc0EN6n)
+- [캐럿마켓 클론코딩](https://nomadcoders.co/carrot-market)
+
+---
