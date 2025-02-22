@@ -1,0 +1,72 @@
+---
+title: Intercepting Routes
+description: 라우트를 가로채서 처리하는 방법
+date: 2025-02-22
+tags: ["NextJS"]
+---
+
+# Intercepting Routes란?
+
+Intercepting Routes는 라우트를 가로채서 처리하는 방법이다. 현재 레이아웃 내에서 애플리케이션의 다른 부분의 라우트를 로드할 수 있다.  
+이 라우팅 방법은 유저가 다른 컨텍스트로 전환하지 않고 라우트의 콘텐츠를 표시하는 경우 유용하다.
+
+> 예를 들어, 특정 페이지를 모달로 오버레이하여 표시하는 경우 사용할 수 있다.
+
+하지만, `Hard Navigation`방식으로 이동하는 경우 인터셉트가 발생하지 않는다.
+
+<br />
+
+# Intercepting Routes의 구성
+
+Intercepting Routes는 `(..)` 규칙으로 정의할 수 있다. 이것은 상대 경로 규칙 `../`과 유사하다.
+
+- `(.)`: 동일 레벨의 세그먼트를 매칭
+- `(..)`: 한 레벨 위의 세그먼트를 매칭
+- `(..)(..)`: 두 레벨 위의 세그먼트를 매칭
+- `(...)`: 루트 레벨(app 디렉토리)의 세그먼트를 매칭
+
+<Image
+  src="/api/image/intercepting-routes/photo-intercepting.webp"
+  alt="slots passed to parent"
+/>
+
+위의 디렉토리 구조에서 `feed` 세그먼트 내에서 `photo` 세그먼트를 인터셉트 할 수 있다.
+
+> (..) 규칙은 파일 시스템이 아닌 라우트 세그먼트를 기반으로 한다.
+
+<br />
+
+# Intercepting Routes의 필요성
+
+인터셉팅 라우팅이 왜 필요하고, 어떤 경우에 사용될까? 나는 사용자 경험을 개선하기 위한 기능이라고 생각한다.
+
+예를 들어, 여러 개의 포스트 미리보기를 표시하는 페이지(/posts)가 있다고 가정해보자. 사용자는 미리보기를 클릭하면 해당 포스트의 상세 페이지(/posts/[id])로 이동하게 된다.
+
+일반적인 라우팅의 경우 포스트의 상세 페이지로 이동하고 뒤로가기 할 때 마다 포스트 목록이 다시 로드된다. 이렇게 되면 포스트 하나를 볼 때마다 전체적인 페이지가 바뀌게 되므로 사용자 경험이 좋지 않을 수 있다.
+
+이럴 경우 모달로 포스트의 상세 페이지를 로드하면 사용자 경험이 좋아질 수 있다.
+
+그렇다면, 컴포넌트를 만들어서 모달로 처리하면 되지 않나? 라고 생각할 수 있겠지만, 인터셉팅 라우팅은 해당 URL로 직접 이동할 때의 경우를 처리할 수 있다.
+
+`/posts` 페이지에서 미리보기를 직접 클릭하여 이동하는 경우(Soft Navigation)에는 모달을 띄워서 사용자 경험을 개선한다.  
+반면에 포스트 디테일 페이지(`/posts/[id]`)로 직접 이동하는 경우(Hard Navigation)에는 모달을 띄우지 않고 포스트 디테일 페이지를 전체 화면에 로드한다.
+
+그냥 컴포넌트로 모달을 처리할 수도 있겠지만, Soft Navigation과 Hard Navigation의 경우를 모두 처리하기에는 힘들 것이다.
+
+<br />
+
+# 마무리
+
+Intercepting Routes의 개념은 단순하지만 막상 사용하려면 어디에 적용해야 할지 어려움이 있다.
+
+따라서 다음 포스트에서는 지난 번에 다루었던 [Parallel Routes](https://www.ice28.dev/posts/parallel-routes)와 함께 모달을 만드는 과정을 정리해보려고 한다.
+
+<br />
+
+# 참고&공부 자료
+
+- [NextJS 공식 문서 - Parallel Routes](https://nextjs.org/docs/app/building-your-application/routing/intercepting-routes)
+- [Next.js 14 강좌 6편. 인터셉팅 라우팅과 병렬 인터셉팅 라우팅 살펴보기](https://mycodings.fly.dev/blog/2024-05-04-nextjs-14-tutorial-6-intercepting-routes-and-parallel-intercepting-routes#nextjs-14-%EA%B0%95%EC%A2%8C-6%ED%8E%B8-%EC%9D%B8%ED%84%B0%EC%85%89%ED%8C%85-%EB%9D%BC%EC%9A%B0%ED%8C%85intercepting-routes%EA%B3%BC-%EB%B3%91%EB%A0%AC-%EC%9D%B8%ED%84%B0%EC%85%89%ED%8C%85-%EB%9D%BC%EC%9A%B0%ED%8C%85parallel-intercepting-routes-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0)
+- [Learn Next.js Intercepting Routes In 11 Minutes](https://youtu.be/zDZBKEvU8b0?si=2dWiqzQ3KFH8AcqZ)
+
+---
