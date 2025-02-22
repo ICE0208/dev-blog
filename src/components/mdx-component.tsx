@@ -10,11 +10,21 @@ const useMDXComponent = (code: string) => {
 const components = {
   Image: ImageWithLoading,
   Callout,
-  h1: ({ children }: { children: React.ReactNode }) => (
-    <h1 className="text-3xl font-bold">{children}</h1>
+  h1: ({ children, id }: { children: React.ReactNode; id?: string }) => (
+    <h1
+      id={id}
+      className="text-3xl font-bold"
+    >
+      {children}
+    </h1>
   ),
-  h2: ({ children }: { children: React.ReactNode }) => (
-    <h2 className="text-2xl font-bold">{children}</h2>
+  h2: ({ children, id }: { children: React.ReactNode; id?: string }) => (
+    <h2
+      id={id}
+      className="text-2xl font-bold"
+    >
+      {children}
+    </h2>
   ),
   p: ({ children }: { children: React.ReactNode }) => (
     <p className="text-lg">{children}</p>
