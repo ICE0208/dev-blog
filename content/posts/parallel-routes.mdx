@@ -20,9 +20,8 @@ Parallel Routes는 `slots` 이라는 것을 사용해서 만들어지고,
 
 <br />
 
-<img
+<Image
   src="/api/image/parallel-routes/slots-passed-to-parent.webp"
-  style={{ maxHeight: "400px" }}
   alt="slots passed to parent"
 />
 
@@ -72,9 +71,8 @@ NextJS는 각 slot의 `활성 상태`(active state)를 추적하며, 이는 두 
 
 위에서 설명했듯, Hard Navigation으로 페이지 이동 시 현재 URL과 일치하는 slot의 경로를 찾을 수 없다면 404 페이지가 렌더링 된다. 이러한 상황을 방지하기 위해 default 파일을 정의하여 대체 콘텐츠를 표시할 수 있다.
 
-<img
+<Image
   src="/api/image/parallel-routes/no-about-in-articles.webp"
-  style={{ maxHeight: "400px" }}
   alt="no about in articles"
 />
 
@@ -82,18 +80,18 @@ NextJS는 각 slot의 `활성 상태`(active state)를 추적하며, 이는 두 
 
 이러한 상황을 방지하기 위해 아래와 같이 @articles slot에 `default` 파일을 정의하여 대체 콘텐츠를 표시할 수 있다.
 
-<img
+<Image
   src="/api/image/parallel-routes/add-default-to-articles.webp"
-  style={{ maxHeight: "400px" }}
+  height="200px"
   alt="add default to articles"
 />
 
 이제 위 구조에서 `/about` 경로로 이동하면 `@articles` slot의 `default` 파일이 렌더링
 된다. 👍
 
-<img
+<Image
   src="/api/image/parallel-routes/about-articles-default.webp"
-  style={{ maxHeight: "400px" }}
+  height="160px"
   alt="about articles default"
 />
 

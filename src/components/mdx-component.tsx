@@ -1,6 +1,6 @@
-import Image from "next/image";
 import * as runtime from "react/jsx-runtime";
 import { Callout } from "./callout";
+import ImageWithLoading from "./image-with-loading";
 
 const useMDXComponent = (code: string) => {
   const fn = new Function(code);
@@ -8,7 +8,7 @@ const useMDXComponent = (code: string) => {
 };
 
 const components = {
-  Image,
+  Image: ImageWithLoading,
   Callout,
   h1: ({ children }: { children: React.ReactNode }) => (
     <h1 className="text-3xl font-bold">{children}</h1>
