@@ -1,0 +1,137 @@
+---
+title: Most Common Word
+description: 가장 많이 등장한 단어를 찾아라
+date: 2025-02-28T01:00:00.000Z
+tags: ["알고리즘"]
+---
+
+# 문제 이해
+
+[819. Most Common Word - 문제 링크](https://leetcode.com/problems/most-common-word/description/)
+
+문제를 해석해 보자.
+
+> `paragraph` 문자열과 금지된 단어를 담은 문자열 배열 `banned`가 주어진다.
+>
+> 금지된 단어가 아닌 단어들 중 가장 많이 등장한 단어를 출력하라.
+>
+> 금지되지 않은 단어가 적어도 하나 존재하고, 답은 유일하다.
+>
+> 단어들은 대소문자를 구분하지 않으며, 답은 소문자로 반환한다.
+
+한 줄로 요약하자면 `주어진 문자열에서 금지된 단어를 제외한 단어들 중 가장 많이 등장한 단어를 반환`하는 문제이다.
+
+<br />
+
+# 문제 조건
+
+예시를 보면 paragraph에 쉼표나 온점 등이 포함되어있는 것을 확인할 수 있다. 밑에 Constraints를 보면, 공백과 특수 기호(!?',;.) 가 포함될 수 있다고 한다.
+
+따라서 단어를 구분할 때 공백으로만 구분하는 것이 아니라, 특수 기호도 고려하여 단어를 구분해야 한다.
+
+<br />
+
+# 문제 풀이
+
+문제를 해결하는 과정은 간단하다.
+
+1. `paragraph` 문자열에서 단어를 추출한다. (소문자로 변환)
+2. 금지된 단어를 제외한다.
+3. 가장 많이 등장한 단어를 출력한다.
+
+가장 복잡한 부분은 단어를 추출하는 부분일 것 같다. 이 부분을 처리하는 방법을 생각해보자.
+
+문자열이 단순히 공백으로만 구분되어 있지 않고 중간에 특수 기호들이 포함되어 있을 수 있다. 따라서 나는 문자열의 처음부터 끝까지 순차적으로 탐색하면서, 공백이나 특수 기호를 만날 때마다 그 이전까지의 문자들을 하나의 단어로 처리하기로 했다.
+
+2번, 3번 과정은 간단한 과정이니 이제 바로 코드 구현을 해보자.
+
+<br />
+
+# 코드 구현
+
+```python showLineNumbers title="most-common-word.py"
+from collections import Counter
+
+class Solution:
+    # 문자열 분리 기준
+    DELIMITERS = set(["!", "?", "'", ",", ";", ".", " "])
+
+    def _extract_lowercase_words(self, paragraph: str) -> list[str]:
+        # 단어를 저장할 리스트와 현재 만들고 있는 단어 초기화
+        words = []
+        current_word = ""
+
+        # 문자열을 순회하며 단어 추출
+        for char in paragraph:
+            if char in self.DELIMITERS:
+                # 구분자를 만나면 현재까지의 단어를 저장
+                if current_word:
+                    words.append(current_word.lower())
+                    current_word = ""
+            else:
+                # 일반 문자는 현재 단어에 추가
+                current_word += char
+
+        # 마지막 단어 처리
+        if current_word:
+            words.append(current_word.lower())
+
+        return words
+
+    def mostCommonWord(self, paragraph: str, banned: list[str]) -> str:
+        # 문단에서 모든 단어를 추출하고 소문자로 변환
+        words = self._extract_lowercase_words(paragraph)
+
+        # 금지된 단어들 제거
+        banned_words = set(banned)
+        valid_words = [word for word in words if word not in banned_words]
+
+        # 각 단어의 출현 빈도 계산
+        word_counts = Counter(valid_words)
+
+        # 가장 많이 등장한 단어 찾아서 반환
+        most_common_word = max(word_counts.items(), key=lambda x: x[1])[0]
+        return most_common_word
+```
+
+위에서 설명한 과정을 그대로 구현한 코드이다.
+
+1. `_extract_lowercase_words` 함수로 문자열에서 단어를 추출하면서 소문자로 변환한다.
+2. `banned_words` 집합으로 금지된 단어들을 제거한다.
+3. `Counter`로 각 단어의 출현 빈도를 계산하고, `max` 함수로 가장 많이 등장한 단어를 찾아서 반환한다.
+
+<br />
+
+# 새로 배운 점
+
+## 정규 표현식으로 단어 추출
+
+책을 보니 정규 표현식을 사용하여 더 쉽게 단어를 추출하였다. 나도 처음에는 정규식을 사용하여 단어를 추출하려고 했지만, 그냥 앞에서부터 순차적으로 탐색하는 방법이 더 직관적이고 쉬운 것 같아서 정규식을 사용하지 않았다.
+
+## Counter 객체의 `most_common` 메서드
+
+나는 Counter로 각 단어의 출현 빈도를 계산하고 `max` 함수로 가장 많이 등장한 단어를 찾아서 반환하였다. 하지만 책에서는 Counter 객체의 `most_common` 메서드를 사용하여 가장 많이 등장한 단어를 찾았다.
+
+사실, Counter 객체를 자주 사용하지 않아서 이 메서드를 처음 알았다. most_common 메서드는 출현 빈도가 높은 순서대로 상위 n개를 반환하는 메서드이다. 이 문제에서는 상위 1개만 반환하면 되므로 매개 변수에 1을 넣어주면 된다.
+
+그러면 위에서 구현한 41번 줄의 코드는 다음과 같이 바꿀 수 있다.
+
+```python
+most_common_word = word_counts.most_common(1)[0][0]
+```
+
+이번에는 제일 많이 등장한 단어만 찾는 것이었으므로 max로 해도 무방했으나, 만약 상위 여러 개의 단어를 찾아야 했다면 most_common 메서드를 사용하는 것이 더 좋았을 것 같다.
+
+<br />
+
+# 마무리
+
+이번 문제는 여러 특수 기호가 포함된 문장에서 단어를 어떻게 추출할 것인가가 핵심이었던 것 같다.
+
+<br />
+
+# 참고&공부 자료
+
+- [파이썬 알고리즘 인터뷰](https://github.com/onlybooks/python-algorithm-interview)
+
+---
