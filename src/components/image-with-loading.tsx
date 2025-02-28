@@ -7,12 +7,14 @@ interface CustomImageProps {
   src: string;
   alt: string;
   height?: string;
+  priority?: boolean;
 }
 
 export default function ImageWithLoading({
   src,
   alt,
   height = "400px",
+  priority = false,
 }: CustomImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(true);
@@ -32,7 +34,7 @@ export default function ImageWithLoading({
       {/* Skeleton */}
       {showSkeleton && (
         <div
-          className={`absolute inset-0 transition-opacity duration-300 ${
+          className={`absolute inset-0 transition-opacity  duration-300 ${
             isLoading ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -47,11 +49,11 @@ export default function ImageWithLoading({
         src={src}
         alt={alt}
         fill
-        objectFit="contain"
-        className={`transition-opacity duration-500 object-contain m-0 ${
+        className={`transition-opacity duration-300 object-contain m-0 ${
           isLoading ? "opacity-0" : "opacity-100"
         }`}
         onLoad={() => setIsLoading(false)}
+        priority={priority}
       />
     </div>
   );
