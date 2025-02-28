@@ -6,6 +6,7 @@ import "@/styles/mdx.css";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { Tag } from "@/components/tag";
+import PostReaction from "@/components/post-reaction";
 
 interface PostPageProps {
   params: Promise<{
@@ -100,6 +101,7 @@ export default async function PostPage({ params }: PostPageProps) {
       ) : null}
       <hr className="my-4" />
       <MDXConect code={post.body} />
+      <PostReaction giscusId={post.giscusId} />
     </article>
   );
 }
