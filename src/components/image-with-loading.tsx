@@ -18,8 +18,10 @@ export default function ImageWithLoading({
   const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
-    // 로딩이 자연스럽게 사라지기 위해 550ms 뒤에 스켈레톤을 사라지게 한다.
-    setTimeout(() => setShowSkeleton(false), 550);
+    if (isLoading === false) {
+      // 로딩이 자연스럽게 사라지기 위해 350ms 뒤에 스켈레톤을 사라지게 한다.
+      setTimeout(() => setShowSkeleton(false), 350);
+    }
   }, [isLoading]);
 
   return (
