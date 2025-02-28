@@ -1,6 +1,7 @@
 "use client";
 
 import Giscus from "@giscus/react";
+import { useTheme } from "next-themes";
 import { useEffect } from "react";
 
 export default function PostReaction({ giscusId }: { giscusId: string }) {
@@ -16,6 +17,9 @@ export default function PostReaction({ giscusId }: { giscusId: string }) {
       document.head.removeChild(meta);
     };
   }, []);
+
+  const { theme, systemTheme } = useTheme();
+
   return (
     <>
       <Giscus
@@ -27,9 +31,13 @@ export default function PostReaction({ giscusId }: { giscusId: string }) {
         term={giscusId}
         strict="1"
         reactionsEnabled="1"
-        emitMetadata="0"
+        emitMetadata="1"
         inputPosition="top"
-        theme="preferred_color_scheme"
+        theme={
+          (theme === "system" ? systemTheme : theme) === "dark"
+            ? "dark_tritanopia"
+            : "light_tritanopia"
+        }
         lang="ko"
         loading="lazy"
       />
