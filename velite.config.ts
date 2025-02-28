@@ -19,6 +19,7 @@ const posts = defineCollection({
       published: s.boolean().default(true),
       body: s.mdx(),
       tags: s.array(s.string()).optional(),
+      giscusId: s.string(),
       // toc: s.toc({ maxDepth: 3 }),
     })
     .transform(computedFields),
