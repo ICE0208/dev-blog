@@ -1,0 +1,205 @@
+---
+title: "[Git] 이전 커밋 확인 및 복원하기"
+description: Git에서 이전 커밋을 확인하고 복원하는 다양한 방법에 대해 알아보자
+date: 2025-03-19T21:35:00.000Z
+tags: ["Git"]
+giscusId: "250319-git-checkout-history"
+---
+
+# 소개
+
+Git의 강력한 기능 중 하나는 프로젝트의 이전 상태를 쉽게 확인하고 필요한 경우 복원할 수 있다는 점이다. 이번 글에서는 과거 커밋을 확인하고, 필요에 따라 복원하는 다양한 방법에 대해 알아본다.
+
+<br />
+
+# 이전 커밋 확인하기
+
+과거 특정 커밋 시점의 코드를 확인하고 싶을 때는 다음 명령어를 사용한다:
+
+```bash
+$ git checkout <커밋해시>
+```
+
+이 명령어를 실행하면 "detached HEAD" 상태로 전환되며 다음과 같은 메시지가 표시된다:
+
+```text
+Note: switching to '커밋해시'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+HEAD is now at 커밋해시 커밋 메시지
+```
+
+이 상태를 "detached HEAD" 상태라고 한다. 이는 HEAD가 브랜치를 참조하는 것이 아니라 커밋을 직접 참조하고 있음을 의미한다.
+
+```bash
+# 일반적인 HEAD 상태
+A---B---C (HEAD -> main)
+
+# Detached HEAD 상태
+A---B---C (main)
+    ^
+    |
+   HEAD
+```
+
+<br />
+
+# Detached HEAD 상태에서 빠져나오기
+
+Detached HEAD 상태에서 다시 원래 브랜치로 돌아가려면 다음 명령어를 사용한다:
+
+```bash
+$ git switch 브랜치명    # 특정 브랜치로 돌아가기
+$ git switch -          # 최근에 참조한 브랜치로 돌아가기
+```
+
+이전에는 `git checkout 브랜치명`을 사용했지만, 최신 Git에서는 브랜치 전환을 위해 `git switch` 명령어를 사용하는 것을 권장한다.
+
+<br />
+
+# 특정 커밋 기준으로 새 브랜치 만들기
+
+과거 커밋을 확인한 후, 그 시점부터 새로운 작업을 시작하고 싶다면 해당 커밋에서 새 브랜치를 생성할 수 있다:
+
+```bash
+# Detached HEAD 상태에서
+$ git switch -c 새브랜치명
+
+# 또는 직접 특정 커밋에서 브랜치 생성
+$ git checkout -b 새브랜치명 커밋해시
+```
+
+<br />
+
+# 상대적 커밋 참조하기
+
+특정 커밋 해시를 기억하는 것은 어려울 수 있다. Git은 HEAD를 기준으로 상대적인 커밋을 참조할 수 있는 방법을 제공한다:
+
+```bash
+$ git checkout HEAD~1    # HEAD의 한 단계 위(이전) 커밋
+$ git checkout HEAD~2    # HEAD의 두 단계 위(이전) 커밋
+```
+
+이 표기법은 다른 Git 명령어에서도 사용할 수 있다:
+
+```bash
+$ git diff HEAD~1 HEAD   # 현재 커밋과 이전 커밋의 차이 비교
+$ git log HEAD~3..HEAD   # 최근 3개 커밋의 로그 확인
+```
+
+<br />
+
+# 파일 변경사항 취소하기
+
+특정 파일의 변경사항을 취소하고 마지막 커밋 상태로 되돌리는 방법은 여러 가지가 있다:
+
+## git checkout으로 취소하기
+
+```bash
+$ git checkout HEAD 파일명    # HEAD 커밋의 파일 상태로 복원
+$ git checkout -- 파일명      # 현재 브랜치의 최신 커밋 상태로 복원
+```
+
+## git restore로 취소하기 (Git 2.23 이상)
+
+`git restore`는 파일을 복원하는 전용 명령어로, 기능이 더 명확하다:
+
+```bash
+$ git restore 파일명               # 마지막 커밋 이후의 변경사항 취소
+$ git restore --source HEAD~1 파일명  # 특정 커밋 버전으로 파일 복원
+```
+
+## 스테이징된 변경사항 취소하기
+
+파일을 스테이징 영역에서 제거하고 싶을 때는:
+
+```bash
+$ git restore --staged 파일명     # 파일을 스테이징 영역에서 작업 디렉토리로 이동
+```
+
+<br />
+
+# 커밋 취소하기
+
+이미 만들어진 커밋을 취소하는 방법에는 `git reset`과 `git revert`가 있다.
+
+## git reset
+
+`git reset`은 커밋 히스토리를 실제로 변경한다. 세 가지 주요 모드가 있다:
+
+1. **기본 모드(--mixed)**: 커밋은 취소하되, 변경사항은 작업 디렉토리에 유지
+
+   ```bash
+   $ git reset 커밋해시
+   ```
+
+2. **하드 모드(--hard)**: 커밋과 변경사항 모두 완전히 제거
+
+   ```bash
+   $ git reset --hard 커밋해시
+   ```
+
+3. **소프트 모드(--soft)**: 커밋은 취소하되, 변경사항은 스테이징 영역에 유지
+   ```bash
+   $ git reset --soft 커밋해시
+   ```
+
+예를 들어, 직전 커밋을 취소하려면:
+
+```bash
+$ git reset HEAD~1       # 직전 커밋 취소, 변경사항은 작업 디렉토리에 유지
+$ git reset --hard HEAD~1  # 직전 커밋 완전히 제거
+```
+
+## git revert
+
+`git reset`이 히스토리를 변경하는 반면, `git revert`는 이전 커밋을 취소하는 새로운 커밋을 생성한다. 이 방법은 이미 공유된 브랜치에서 작업할 때 더 안전하다:
+
+```bash
+$ git revert 커밋해시
+```
+
+이 명령어는 지정한 커밋의 변경사항을 취소하는 새 커밋을 생성한다. 원본 커밋 히스토리는 그대로 유지된다.
+
+```bash
+# revert 전
+A---B---C---D (HEAD -> main)
+
+# C 커밋을 revert 한 후
+A---B---C---D---E (HEAD -> main)
+```
+
+여기서 E는 C 커밋의 변경사항을 정확히 반대로 적용한 새로운 커밋이다.
+
+예를 들어, C 커밋에서 어떤 코드가 추가되었다면 E 커밋에서는 그 코드가 삭제되고, C 커밋에서 삭제된 코드는 E 커밋에서 다시 추가된다. 이렇게 revert는 이전 커밋을 "취소"하는 새 커밋을 생성하면서도 기존 커밋 히스토리는 그대로 보존한다.
+
+<br />
+
+# reset과 revert 중 어떤 것을 사용해야 할까?
+
+- **reset**: 로컬에서만 작업하고, 다른 사람들과 공유되지 않은 커밋을 취소할 때 사용한다.
+- **revert**: 이미 푸시되어 다른 사람들과 공유된 커밋을 취소할 때 사용한다.
+
+일반적으로 협업 상황에서는 `git revert`를 사용하는 것이 더 안전하다.
+
+<br />
+
+# 결론
+
+Git은 프로젝트의 이전 상태를 확인하고 복원하는 다양한 방법을 제공한다. `git checkout`과 `git switch`를 사용하여 이전 커밋을 확인할 수 있고, `git restore`를 사용해 파일 변경사항을 취소할 수 있다. 커밋을 취소할 때는 상황에 맞게 `git reset`이나 `git revert`를 선택하여 사용하면 된다.
+
+이러한 명령어들을 잘 이해하고 활용하면, Git을 사용하는 개발 과정에서 실수를 쉽게 복구하고 코드 품질을 유지하는 데 큰 도움이 될 것이다.
+
+---
